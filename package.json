@@ -1,0 +1,29 @@
+{
+  "name": "web-services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WozniakMichal2/web-services.git"
+  },
+  "author": "23626",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/WozniakMichal2/web-services/issues"
+  },
+  "homepage": "https://github.com/WozniakMichal2/web-services#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "easy-soap-request": "^3.5.0",
+    "express": "^4.17.1",
+    "helmet": "^4.2.0"
+  }
+}
