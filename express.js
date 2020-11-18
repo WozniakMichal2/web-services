@@ -1,12 +1,19 @@
 const express = require('express')
 const helmet = require("helmet")
+const formidable = require('formidable')
+const fs = require('fs')
 var bodyParser = require('body-parser')
+var jwt = require('jsonwebtoken');
+var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
 let yup = require('yup')
 
 const soapRequest = require('easy-soap-request')
+const { text } = require('body-parser')
 const app = express()
 const port = 3000
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use(bodyParser.urlencoded({extended:false}))
 
 app.get('/', (req, res) => {
@@ -59,3 +66,81 @@ app.post('/store', function(req, res) {
 })
 
 app.use(helmet())
+
+
+
+app.post('/parse', (req, res) => {
+  const form = formidable({ multiples: true });
+  var toJson="{\"";
+  var isOpen=false;
+  form.parse(req, (err, fields, files) => {
+
+    var path=files.toParse.path;
+    console.log(path);
+    fs.readFile(path,(err, data) => {
+      if (err) throw err;
+      text=data.toString();
+    for (let i=0; i<text.length; i++)
+    {
+      if (text[i]==":")
+      {
+        toJson+="\":";
+        let isNumberTmp=parseInt(text[i+1]);
+        let isNumber=isNaN(isNumberTmp);
+      if (isNumber)
+      {
+        toJson+="{\"";
+        isOpen=true;
+      }
+      }
+      else if (text[i]==";")
+      {
+        if(isOpen)
+        {
+          toJson+="}";
+          isOpen=false;
+        }
+        toJson+=",\"";
+      }
+      else if (text[i]==",")
+      {
+        toJson+=",\"";
+      }
+      else {
+        toJson+=text[i];
+      }
+    }
+    if(isOpen)
+    {
+      toJson+="}";
+    }
+    toJson+="}";
+    toJson.trim();
+
+    console.log(toJson);
+    res.json(JSON.parse(toJson));
+    res.status(200);
+    
+  });
+});
+});
+
+app.get('/login/:log/:pass', (req, res) => {
+  var log = req.params.log;
+  var pass = req.params.pass;
+  var login = "admin"
+  var password = "admin"
+
+  var token = jwt.sign({login}, secret)
+  
+  if(log==login & pass==password){
+    res.status(200)
+    res.send(token)
+  }
+  else{
+    res.status(401)
+    res.send('Błąd 401');
+  }
+});
+
+
