@@ -143,4 +143,18 @@ app.get('/login/:log/:pass', (req, res) => {
   }
 });
 
+app.get('/profile', (req,res)=> {
+  let token = req.headers.authorization;
+  token=token.slice(7);
+  var decoded=jwt.decode(token);
+  var login = "login";
+  if (decoded.login==login)
+  {
+    res.json({"login":decoded.login});
+  }
+  else {
+    res.status(401);
+    res.send("Wrong token!");
+  }
 
+})
